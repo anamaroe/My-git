@@ -1,14 +1,19 @@
-#include "../inc/util.hpp"
+#include "../inc/Util.hpp"
 #include <iostream>
 #include <filesystem>
 #include <fstream>
 #include <string>
 #include <zlib.h>
 
+#include "../inc/GitInternals.hpp"
+
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+
+    GitInternals MyGit;
+   
     // Flush after every std::cout / std::cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
@@ -128,7 +133,7 @@ int main(int argc, char *argv[])
         string treeSha;
         bool nameOnly = false;
 
-        if (argv[2] == "--name-only") {
+        if (string(argv[2]) == "--name-only") {
             treeSha = argv[3];
             nameOnly = true;
         }
@@ -142,7 +147,7 @@ int main(int argc, char *argv[])
 
         // open file
         ifstream file;
-        file.open(location);
+        file.open(location, ios::binary);
         if (!file.is_open()) {
             cerr << "Could not open file." << endl;
             return EXIT_FAILURE;
@@ -157,11 +162,14 @@ int main(int argc, char *argv[])
         string content = Util::decompressFile(compressedContent);
 
         if (nameOnly) {
-            cout << content;
+            Util::parseTreeContent(content, true);
         }
         else {
-            Util::parseTreeContent(content);
+            Util::parseTreeContent(content, false);
         } 
+     }
+     else if (command == "write-tree") {
+        
      }
      
      else {

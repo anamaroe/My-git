@@ -1,4 +1,4 @@
-#include "../inc/util.hpp"
+#include "../inc/Util.hpp"
 #include <zlib.h>
 #include <vector>
 #include <iostream>
@@ -75,7 +75,7 @@ std::string Util::toHex(std::string bin_sha) {
     return ss.str();
 }
 
-void Util::parseTreeContent(std::string content) {
+void Util::parseTreeContent(std::string content, bool isNameOnly) {
     /*
     *   The format of a tree object file looks like this (after Zlib decompression):
 
@@ -109,7 +109,8 @@ void Util::parseTreeContent(std::string content) {
     }
     size_t i = pos + 1;
     while (i < content.size()) {
-        std::string mode, name, bin_sha, hex_sha, type;
+        std::string name;
+        std::string mode, bin_sha, hex_sha, type;
         while (content[i] != ' ') {
             mode += content[i++];
         }
@@ -123,6 +124,11 @@ void Util::parseTreeContent(std::string content) {
         i += 20;
         type = (mode == "40000" || mode == "040000") ? "tree" : "blob";
 
-        std::cout << mode << " " << type << " " << hex_sha << "\t" << name << std::endl;
+        if (isNameOnly) {
+            std::cout << name << std::endl;
+        }
+        else {
+            std::cout << mode << " " << type << " " << hex_sha << "\t" << name << std::endl;
+        }
     }
 }
